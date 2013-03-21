@@ -28,7 +28,6 @@ package model
 		private var _playersNamesArray:Array;
 		
 		private var _counter:int = 0; 
-		private var _playerName:String;
 		
 		public function WorldVO()
 		{
@@ -36,21 +35,9 @@ package model
 			_entitiesArray = new Vector.<EntityVO>;
 			
 			_entitiesSubgroupsDic = new Dictionary();
-				_entitiesSubgroupsDic["loopable_entities"] = new Vector.<EntityVO>;
-				
-				
+			_entitiesSubgroupsDic["loopable_entities"] = new Vector.<EntityVO>;
 			
 			_playersNamesArray = new Array();
-		}
-
-		public function get playerName():String
-		{
-			return _playerName;
-		}
-
-		public function set playerName(value:String):void
-		{
-			_playerName = value;
 		}
 
 		public function get entitiesDic():Dictionary
@@ -81,7 +68,8 @@ package model
 			if((owner != _playersNamesArray[0] || _playersNamesArray.length == 0)){
 				_playersNamesArray.push(owner);
 				_entitiesSubgroupsDic[owner] = new Vector.<EntityVO>;
-				_entitiesSubgroupsDic[owner + "_attackable_entities"] = new Vector.<EntityVO>; 
+				_entitiesSubgroupsDic[owner + "_attackable_entities"] = new Vector.<EntityVO>;
+				_entitiesSubgroupsDic[owner + "_core_entities"] = new Vector.<EntityVO>;
 			}
 		}
 		
@@ -93,6 +81,11 @@ package model
 			
 			_entitiesSubgroupsDic[entity.owner].push(entity);
 			
+			
+			if(entity.type == "core"){
+				_entitiesSubgroupsDic[entity.owner + "_core_entities"].push(entity);
+			}
+			
 			/*if(entity.attackable){
 				_entitiesSubgroupsDic[entity.owner + "_attackable_entities"].push(entity);
 			}
@@ -100,14 +93,10 @@ package model
 
 			if(entity.parentContainer)
 				_entitiesDic[entity.parentContainer].childEntity = entity.id;
-			
+			*/			
 			_entitiesArray.push(entity);
 			_entitiesDic[entity.id] = entity;	
-			
-			if(entity.loopable){
-				_entitiesSubgroupsDic["loopable_entities"].push(entity);
-			}
-*/				
+				
 			
 		}
 		
@@ -133,7 +122,7 @@ package model
 				return _playersNamesArray[0];
 		}
 		
-		public function getEntitiesSubgroup(subgroup:String, owner:String = "all"):Vector.<EntityVO> {
+		public function getEntitiesSubgroup(subgroup:String, owner:String):Vector.<EntityVO> {
 			
 			switch(subgroup) {
 				case "enemy_entities":
@@ -144,16 +133,16 @@ package model
 					return _entitiesSubgroupsDic[owner];
 					break;
 				
-				case "loopable_entities":
-					return _entitiesSubgroupsDic["loopable_entities"];
-					break;
-				
 				case "enemy_attackable_entities":
 					return _entitiesSubgroupsDic[getEnemyName(owner) + "_attackable_entities"];
 					break;
 				
 				case "all_entities":
 					return _entitiesArray;
+					break;
+				
+				case "ally_core_entities":
+					return _entitiesSubgroupsDic[owner + "_core_entities"];
 					break;
 				
 				default:

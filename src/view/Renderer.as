@@ -141,7 +141,7 @@ package view
 		}
 		
 		private function onCoresAnimationComplete():void {
-			_manager.onEnterShipsComplete();
+			_manager.onEnterCoresComplete();
 		}
 		
 		public function addBackground():void {

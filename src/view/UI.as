@@ -79,10 +79,6 @@ package view
 				showDebugInfo();
 		}
 		
-		//when the game state advance to the planning state, we show the planning UI
-		public function showPlanningUI(value:Boolean):void {
-		}
-		
 		public function showVisualMessage(text:String, color:String):void {
 			var visualMessage:VisualMessage = new VisualMessage(text, color);
 			visualMessage.addEventListener("VisualMessageComplete", onVisualMessageComplete);
@@ -102,8 +98,10 @@ package view
 		private function initActionbar():void {
 			_actionBar = new ActionBar();
 			//this way the starting position of the action bar is "hidden"
-			_actionBar.x = 800;
+			trace(this.width, this.height);
+			_actionBar.x = 740;
 			addChild(_actionBar);
+			trace(this.width, this.height);
 			_actionBar.addEventListener("ReadyEvent", sendReadyEvent);
 				
 		}
@@ -111,11 +109,6 @@ package view
 		public function sendReadyEvent(e:Event):void {
 			Manager.getInstance().sendPlayerReadyEvent();
 		}
-		
-		public function enableButtons(bool:Boolean):void {
-			_actionBar.enableButtons(bool);	
-		}
-		
 		
 		private function onMove(e:TouchEvent):void {
 			var touch:Touch = e.touches[0];
@@ -173,11 +166,10 @@ package view
 					stage.removeEventListener(TouchEvent.TOUCH, onMove);
 					Mouse.show();
 					_entityIssued.position = new Point(touch.globalX, touch.globalY);
-					var action:Action = new Action("addEntity", _entityIssued);
+					var action:Action = new Action("issueEntity", _entityIssued);
 					dispatchEventWith("issueAction", false, action);
 					removeChild(_mouseCursorImage, true);
 					_entityIssued = null;
-					
 				}
 				else{
 					_entityBuilder.visible = true;
@@ -244,8 +236,8 @@ package view
 		//animate action bar entering the stage
 		public function showActionBar():void {
 			
-			var tween:Tween = new Tween(_actionBar, 1.5, Transitions.EASE_OUT);
-			tween.animate("x", _actionBar.x - 100);
+			var tween:Tween = new Tween(_actionBar, 1, Transitions.EASE_OUT);
+			tween.animate("x", _actionBar.x - 40);
 			Starling.juggler.add(tween);
 			tween.onComplete = onShowActionBarTweenComplete;
 			
@@ -307,38 +299,12 @@ package view
 
 		
 		public function updateUITurnCountdown(count:int):void {
-			_actionBar.updateUITurnCountdown(count);
+			//_actionBar.updateUITurnCountdown(count);
 		}
 			
-		/*private function onSelectorTouched(e:SelectorPanelEvent):void {
-				
-				var action:Action;
-				
-				switch(e.actionType) {
-					case "sell":
-						action = new Action(e.actionType, _clickedEntity);
-						break;
-					//if the action type is setRallyPoint, we stop the flow and wait for a target
-					case "setRallypoint":
-						_status = WAITING_FOR_TARGET;
-						_action = new Action(e.actionType, _clickedEntity);
-						removeEntityUI();
-						return;
-						break;
-					case "upgrade":
-						action = new Action(e.actionType, _clickedEntity);
-						break;
-				}
-				
-			removeEntityUI();
-		}*/
-		
 		public function removeEntityUI():void {
 			if(!_showingEntityUI) return;
 			
-			/*removeChild(_selectorPanel);
-			_selectorPanel.dispose();*/
-
 			if(_rallypointContainer){
 				removeChild(_rallypointContainer);
 				_rallypointContainer.dispose();

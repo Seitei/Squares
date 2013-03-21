@@ -87,7 +87,7 @@ package managers
 		
 		private function onActionBarTweenCompleted(e:Event):void {
 			
-			//Main.getInstance().getRenderer().enterCores();
+			Main.getInstance().getRenderer().enterCores();
 		}
 		
 		
@@ -131,13 +131,12 @@ package managers
 			
 			if(_connectionOrder == "second"){
 				_turn = "enemyTurn";
-				UI.getInstance().enableButtons(false);
 			}
 			else{
 				_turn = "myTurn";
 			}
 			
-			var myCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, new Point(350, 675));
+			var myCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, new Point(350, 725));
 			var myCoreAction:Action = new Action("addEntity", myCore);
 			
 			var myData:Array = new Array();
@@ -151,32 +150,31 @@ package managers
 						 [0, 0, 0, 0, 0, 0, 0]];
 					
 			myCore.data = myData;
-			myCore.status = "active";
 			
 			this.addEventListener("issueAction", handler);
 			dispatchEventWith("issueAction", false, myCoreAction);
 			
 			//if not online, we force a send with different id and owner to create the enemy core as well
-			/*if(!online){
-				var enemyCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, new Point(350, 25));
+			if(!online){
+				var enemyCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, new Point(350, -25));
 				enemyCore.owner = "TEST";
 				enemyCore.id = "TEST" + enemyCore.id.substring(enemyCore.id.indexOf("_"));
 				
 				var enemyData:Array = new Array();
-				enemyData[0] = "vertexCentered";
-				enemyData[1] = [[0, 0, 0, 0, 0, 0], 
-						        [0, 0, 0, 0, 0, 0],
-							    [0, 0, 1, 1, 0, 0],
-							    [0, 0, 1, 1, 0, 0],
-							    [0, 0, 0, 0, 0, 0],
-							    [0, 0, 0, 0, 0, 0]];
+				enemyData[0] = "vertexCenteredMode";
+				enemyData[1] = [[0, 0, 0, 0, 0, 0, 0], 
+							 [0, 0, 0, 0, 0, 0, 0],
+							 [0, 0, 1, 1, 0, 0, 0],
+							 [0, 0, 1, 1, 0, 0, 0],
+							 [0, 0, 0, 0, 0, 0, 0],
+							 [0, 0, 0, 0, 0, 0, 0],
+							 [0, 0, 0, 0, 0, 0, 0]];
 									 
 				enemyCore.data = enemyData;
-				enemyCore.status = "active";
 				
 				var enemyCoreAction:Action = new Action("addEntity", enemyCore);
-				handler(enemyCoreAction, true);
-			}*/
+				dispatchEventWith("issueAction", false, enemyCoreAction);
+			}
 			
 			//send now with a delay, remove this patch when final implementation is in progress
 			var timer:Timer = new Timer(500, 1);
@@ -185,15 +183,12 @@ package managers
 			
 			_main.startGame();
 			
-			//_ui.showActionBar();
+			_ui.showActionBar();
 			
 			
 		}
 		
-		public function onEnterShipsComplete():void {
-			
-			UI.getInstance().showPlanningUI(true);
-			Main.getInstance().getRenderer().showTiles();
+		public function onEnterCoresComplete():void {
 			
 			advanceGameState();
 			
@@ -228,7 +223,6 @@ package managers
 				else
 					_turn = "enemyTurn";
 				
-				UI.getInstance().enableButtons(false);
 				_player.sendReadyMessage(_playerName);
 				
 			}
@@ -241,9 +235,9 @@ package managers
 		
 		public function handler(e:Event, action:Action):void {
 			
-			if(!online){
+			/*if(!online){
 				_player.addToActionBuffer(action);
-			}
+			}*/
 			
 			_gameManager.updateWorld(action);
 			
@@ -268,12 +262,10 @@ package managers
 			
 			if(_state == GameStatus.COUNTDOWN_STOPPED) {
 				sendActionBuffer();
-				UI.getInstance().showPlanningUI(false);
 			}
 			
 			if(_state == GameStatus.STOPPED) {
 				Main.getInstance().getRenderer().pauseOrResumeAnimations();
-				UI.getInstance().showPlanningUI(true);
 			}
 			
 			if(_state == GameStatus.PLAYING) {
@@ -294,10 +286,8 @@ package managers
 			_hesReady = true;
 			if(_imReady) {
 				advanceGameState();
-				UI.getInstance().enableButtons(false);
 			}
 			else {
-				UI.getInstance().enableButtons(true);
 				_turn = "myTurn";
 				_ui.showVisualMessage("YOUR TURN", "me");
 			}

@@ -13,6 +13,9 @@ package utils
 		[Embed(source = "../assets/background.png")]
 		private static const Background:Class;
 		
+		[Embed(source = "../assets/action_bar_bg.png")]
+		private static const ActionBarBg:Class;
+		
 		[Embed(source = "../assets/entity_builder_background.png")]
 		private static const EntityBuilderBackground:Class;
 		
@@ -193,6 +196,17 @@ package utils
 		[Embed(source = "../assets/square_hover.png")]
 		private static const SquareHover:Class;
 		
+		//////
+		[Embed(source = "../assets/ready_up_btn.png")]
+		private static const ReadyUpBtn:Class;
+		
+		[Embed(source = "../assets/ready_down_btn.png")]
+		private static const ReadyDownBtn:Class;
+		
+		[Embed(source = "../assets/ready_hover_btn.png")]
+		private static const ReadyHoverBtn:Class;
+		
+		
 		// XML //
 		
 		
@@ -207,6 +221,14 @@ package utils
 		{
 			TextureAssets["background"] = Background;
 			TextureAssets["entity_builder_background"] = EntityBuilderBackground;
+			
+			
+			//////
+			
+			TextureAssets["ready_up_btn"] = ReadyUpBtn;
+			TextureAssets["ready_down_btn"] = ReadyDownBtn;
+			TextureAssets["ready_hover_btn"] = ReadyHoverBtn;
+			
 			
 			//////
 			
@@ -283,6 +305,8 @@ package utils
 			TextureAssets["square_up"] = SquareUp;
 			TextureAssets["square_down"] = SquareDown;
 			TextureAssets["square_hover"] = SquareHover;
+			
+			TextureAssets["action_bar_bg"] = ActionBarBg;
 			
 			
 			// XMLS

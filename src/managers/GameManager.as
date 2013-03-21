@@ -55,7 +55,6 @@ package managers
 		public function set playerName(value:String):void
 		{
 			_playerName = value;
-			_world.playerName = _playerName;
 		}
 
 		public function updateWorld(action:Action):void {
@@ -64,9 +63,6 @@ package managers
 					renderEntity(action.entity);
 					_world.addEntity(action.entity);
 					break;
-				case "sell":
-					removeEntity(action.entity);
-					break;
 				case "setRallypoint":
 					_world.updateEntity(action.entity, "rallypoint", action.entity.rallypoint );
 					break;
@@ -74,6 +70,9 @@ package managers
 					_world.updateEntity(action.entity, "applyLevel", action.entity.level + 1);
 					renderEntity(action.entity);
 					break;
+				case "issueEntity":
+					action.target = _world.getEntitiesSubgroup("ally_core_entities", _playerName)[0];
+					_world.updateEntity(action.target, "issuedEntity", action.entity);
 			}
 		}
 		
@@ -133,7 +132,7 @@ package managers
 		private function updateEntities():void {
 			var spriteEntities:Dictionary = Main.getInstance().getRenderer().getSpriteEntitiesDic();
 			//we only consider the loopable entities
-			var entities:Vector.<EntityVO> = _world.getEntitiesSubgroup("loopable_entities");
+			var entities:Vector.<EntityVO> = _world.getEntitiesSubgroup("loopable_entities", "all");
 			
 			for each (var ent:EntityVO in entities) {
 					
