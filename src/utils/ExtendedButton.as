@@ -8,13 +8,17 @@ package utils
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
+	import starling.display.MovieClip;
+	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
+	import starling.textures.RenderTexture;
 	import starling.textures.Texture;
+	import starling.textures.TextureAtlas;
 	import starling.utils.HAlign;
 	import starling.utils.VAlign;
 	
@@ -25,116 +29,86 @@ package utils
 	 *  A custom button that extends the Button class that comes with Starling 
 	 */ 
 	
-	public class ExtendedButton extends DisplayObjectContainer
+	public class ExtendedButton extends Sprite
 	{
 		private static const MAX_DRAG_DIST:Number = 50;
 		
-		protected var mUpState:Texture;
-		protected var mDownState:Texture;
-		protected var mHoverState:Texture;
+		private var _upStateTexture:Texture;
+		private var _downStateTexture:Texture; 
+		private var _hoverStateTexture:Texture;
 		
-		protected var mContents:Sprite;
-		protected var mBackground:Image;
-		private var mTextField:TextField;
-		private var mTextBounds:Rectangle;
+		private var _data:Object;
+		private var _buttonImage:Image;
 		
-		private var mScaleWhenDown:Number;
-		private var mAlphaWhenDisabled:Number;
-		private var mEnabled:Boolean;
-		protected var mIsDown:Boolean;
-		protected var mIsHovered:Boolean;
-		private var mIsForced:Boolean;
-		private var mUseHandCursor:Boolean;
-		private var mTextDown:TextField;
+		private var _enabled:Boolean;
+		private var _isDown:Boolean;
+		private var _isHovered:Boolean;
+		private var _isSelected:Boolean;
+		private var _useHandCursor:Boolean;
+		private var _stateTexturesArray:Array;
+		private var _texturesArray:Vector.<Texture>;
 		
-		/** Creates a button with textures for up, hover and down state or text. */
-		public function ExtendedButton(upState:Texture, text:String="", downState:Texture=null, hoverState:Texture=null, mouseTexture:Texture = null, textDown:TextField = null )
+		/** Creates a button with a vector of textures or an array of display objects that represent the different states*/
+		public function ExtendedButton(buttonStates:*, data:Object = null)
 		{
-			if (upState == null) throw new ArgumentError("Texture cannot be null");
+			if (buttonStates.length == 0) throw new ArgumentError("Textures vector needs to have at least one texture state (up)");
 			
-			mUpState = upState;
-			mDownState = downState ? downState : upState;
-			mHoverState = hoverState ? hoverState : mDownState;
-			mTextDown = textDown;
-			mBackground = new Image(upState);
-			mScaleWhenDown = downState ? 1.0 : 0.9;
-			mAlphaWhenDisabled = 0.5;
-			mEnabled = true;
-			mIsDown = false;
-			mUseHandCursor = true;
-			mTextBounds = new Rectangle(0, 0, upState.width, upState.height);            
+			_data = data;
+			_enabled = true;
+			_isDown = false;
+			_useHandCursor = true;
 			
-			mContents = new Sprite();
-			mContents.addChild(mBackground);
-			addChild(mContents);
-			addEventListener(TouchEvent.TOUCH, onTouch);
+			_stateTexturesArray = new Array();
+			_stateTexturesArray.push(_upStateTexture);
+			_stateTexturesArray.push(_downStateTexture);
+			_stateTexturesArray.push(_hoverStateTexture);
 			
-			if (text.length != 0) this.text = text;
-		}
-		
-		public function get IsForced():Boolean
-		{
-			return mIsForced;
-		}
-
-		public function get textDown():TextField
-		{
-			return mTextDown;
-		}
-		
-		public function set textDown(value:TextField):void
-		{
-			mTextDown = value;
-			mTextDown.visible = false;
-			mContents.addChild(mTextDown);
-		}
-		
-		public function get textField():TextField
-		{
-			return mTextField;
-		}
-		
-		public function set textField(value:TextField):void
-		{
-			mTextField = value;
-			mContents.addChild(mTextField);
-		}
-		
-		protected function resetContents():void
-		{
-			mIsDown = false;
-			mBackground.texture = mIsHovered ? mHoverState : mUpState;
-			mContents.x = mContents.y = 0;
-			mContents.scaleX = mContents.scaleY = 1.0;
-		}
-		
-		private function createTextField():void
-		{
-			if (mTextField == null)
-			{
-				mTextField = new TextField(mTextBounds.width, mTextBounds.height, "");
-				mTextField.vAlign = VAlign.CENTER;
-				mTextField.hAlign = HAlign.CENTER;
-				mTextField.touchable = false;
-				mTextField.autoScale = true;
-				mContents.addChild(mTextField);
+			if(buttonStates[0] is DisplayObject){
+				var count:int = 0;
+				for each(var state:DisplayObject in buttonStates){
+					var rt:RenderTexture = new RenderTexture(state.width, state.height);
+					rt.draw(state);
+					_texturesArray[count] = rt;
+					count ++;
+				}
+			}
+			else {
+				_texturesArray = buttonStates;
 			}
 			
-			mTextField.width  = mTextBounds.width;
-			mTextField.height = mTextBounds.height;
-			mTextField.x = mTextBounds.x;
-			mTextField.y = mTextBounds.y;
+			for (var i:int = 0; i < _stateTexturesArray.length; i ++){
+				_stateTexturesArray[i] = _texturesArray[i];
+			}
+			
+			addChild(_buttonImage);
+			addEventListener(TouchEvent.TOUCH, onTouch);
+		}
+		
+		public function get data():Object
+		{
+			return _data;
+		}
+
+		public function get isSelected():Boolean
+		{
+			return _isSelected;
+		}
+
+		protected function resetContents():void
+		{
+			_isDown = false;
+			_buttonImage.texture = _isHovered ? _hoverStateTexture : _upStateTexture;
 		}
 		
 		private function onTouch(event:TouchEvent):void
 		{
-			if (!mEnabled)
+			if (!_enabled)
 				return;
 			
 			var touch:Touch = event.getTouch(this);
 			var buttonRect:Rectangle = getBounds(stage);
 
-			if(mUseHandCursor && mEnabled && event.interactsWith(this)){
+			if(_useHandCursor && _enabled && event.interactsWith(this)){
 				Mouse.cursor = MouseCursor.BUTTON;
 			}
 			else {
@@ -151,38 +125,29 @@ package utils
 			//added a hover touch detection
 			var hoverTouch:Touch = event.getTouch(DisplayObject(event.currentTarget), TouchPhase.HOVER);
 			
-			if(!mIsForced){
+			if(!_isSelected){
 				if(hoverTouch) {
-					if(mTextField && mTextDown){
-						mTextField.visible = false;
-						mTextDown.visible = true;
-					}
-					mBackground.texture = mHoverState;
+					
+					_buttonImage.texture = _hoverStateTexture;
 				}
 				else {
-					if(mTextField && mTextDown){
-						mTextField.visible = true;
-						mTextDown.visible = false;
-					}
-					mBackground.texture = mUpState;
+					
+					_buttonImage.texture = _upStateTexture;
 				}
 			}
 			
 			
-			if (!mEnabled || touch == null){
+			if (!_enabled || touch == null){
 				Mouse.cursor = MouseCursor.AUTO;
 				return;
 			}
 			
-			if (touch.phase == TouchPhase.BEGAN && !mIsDown)
+			if (touch.phase == TouchPhase.BEGAN && !_isDown)
 			{
-				mBackground.texture = mDownState;
-				mContents.scaleX = mContents.scaleY = mScaleWhenDown;
-				mContents.x = (1.0 - mScaleWhenDown) / 2.0 * mBackground.width;
-				mContents.y = (1.0 - mScaleWhenDown) / 2.0 * mBackground.height;
-				mIsDown = true;
+				_buttonImage.texture = _downStateTexture;
+				_isDown = true;
 			}
-			else if (touch.phase == TouchPhase.MOVED && mIsDown)
+			else if (touch.phase == TouchPhase.MOVED && _isDown)
 			{
 				// reset button when user dragged too far away after pushing
 				
@@ -194,124 +159,44 @@ package utils
 					resetContents();
 				}
 			}
-			else if (touch.phase == TouchPhase.ENDED && mIsDown)
+			else if (touch.phase == TouchPhase.ENDED && _isDown)
 			{
 				if (touch.globalX < buttonRect.x ||
 					touch.globalY < buttonRect.y ||
 					touch.globalX > buttonRect.x + buttonRect.width ||
 					touch.globalY > buttonRect.y + buttonRect.height) {
 				
-					mIsHovered = false;	
+					_isHovered = false;	
 				}
 				else {
-					mIsHovered = true;
+					_isHovered = true;
 				}
 				
 				resetContents();
-				dispatchEventWith("buttonTriggeredEvent", true, this.localToGlobal(new Point(0, 0)));
+				var position:Point = this.localToGlobal(new Point(0, 0));
+				_data.position = position;
+				dispatchEventWith("buttonTriggeredEvent", true, _data);
 			}
 		}
 		
-		public function forceDownState(value:Boolean):void {
-			mIsForced = value;
-			mBackground.texture = value ? mDownState : mUpState;
+		public function selectDownState(value:Boolean):void {
+			_isSelected = value;
+			_buttonImage.texture = value ? _downStateTexture : _upStateTexture;
 		}
 		
-		/** The scale factor of the button on touch. Per default, a button with a down state 
-		 * texture won't scale. */
-		public function get scaleWhenDown():Number { return mScaleWhenDown; }
-		public function set scaleWhenDown(value:Number):void { mScaleWhenDown = value; }
-		
-		/** The alpha value of the button when it is disabled. @default 0.5 */
-		public function get alphaWhenDisabled():Number { return mAlphaWhenDisabled; }
-		public function set alphaWhenDisabled(value:Number):void { mAlphaWhenDisabled = value; }
 		
 		/** Indicates if the button can be triggered. */
-		public function get enabled():Boolean { return mEnabled; }
+		public function get enabled():Boolean { return _enabled; }
 		public function set enabled(value:Boolean):void
 		{
-			if (mEnabled != value)
+			if (_enabled != value)
 			{
-				mEnabled = value;
-				mContents.alpha = value ? 1.0 : mAlphaWhenDisabled;
+				_enabled = value;
 				resetContents();
 			}
 		}
 		
-		/** The text that is displayed on the button. */
-		public function get text():String { return mTextField ? mTextField.text : ""; }
-		public function set text(value:String):void
-		{
-			createTextField();
-			mTextField.text = value;
-		}
 		
-		/** The name of the font displayed on the button. May be a system font or a registered 
-		 * bitmap font. */
-		public function get fontName():String { return mTextField ? mTextField.fontName : "Verdana"; }
-		public function set fontName(value:String):void
-		{
-			createTextField();
-			mTextField.fontName = value;
-		}
 		
-		/** The size of the font. */
-		public function get fontSize():Number { return mTextField ? mTextField.fontSize : 12; }
-		public function set fontSize(value:Number):void
-		{
-			createTextField();
-			mTextField.fontSize = value;
-		}
-		
-		/** The color of the font. */
-		public function get fontColor():uint { return mTextField ? mTextField.color : 0x0; }
-		public function set fontColor(value:uint):void
-		{
-			createTextField();
-			mTextField.color = value;
-		}
-		
-		/** Indicates if the font should be bold. */
-		public function get fontBold():Boolean { return mTextField ? mTextField.bold : false; }
-		public function set fontBold(value:Boolean):void
-		{
-			createTextField();
-			mTextField.bold = value;
-		}
-		
-		/** The texture that is displayed when the button is not being touched. */
-		public function get upState():Texture { return mUpState; }
-		public function set upState(value:Texture):void
-		{
-			if (mUpState != value)
-			{
-				mUpState = value;
-				if (!mIsDown) mBackground.texture = value;
-			}
-		}
-		
-		/** The texture that is displayed while the button is touched. */
-		public function get downState():Texture { return mDownState; }
-		public function set downState(value:Texture):void
-		{
-			if (mDownState != value)
-			{
-				mDownState = value;
-				if (mIsDown) mBackground.texture = value;
-			}
-		}
-		
-		/** The bounds of the textfield on the button. Allows moving the text to a custom position. */
-		public function get textBounds():Rectangle { return mTextBounds.clone(); }
-		public function set textBounds(value:Rectangle):void
-		{
-			mTextBounds = value.clone();
-			createTextField();
-		}
-		
-		/** Indicates if the mouse cursor should transform into a hand while it's over the button. 
-		 *  @default true */
-		public override function get useHandCursor():Boolean { return mUseHandCursor; }
-		public override function set useHandCursor(value:Boolean):void { mUseHandCursor = value; }
 	}
 }

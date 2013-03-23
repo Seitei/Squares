@@ -9,7 +9,6 @@ package view
 	import flash.ui.MouseCursorData;
 	import flash.utils.Dictionary;
 	
-	import model.ActionButtonVO;
 	import model.EntityVO;
 	
 	import starling.display.Button;
@@ -21,6 +20,7 @@ package view
 	import starling.extensions.ClippedSprite;
 	import starling.text.TextField;
 	import starling.textures.Texture;
+	import starling.textures.TextureSmoothing;
 	
 	import utils.ExtendedButton;
 	import utils.ResourceManager;
@@ -43,6 +43,7 @@ package view
 			var texture:Texture;
 			texture = ResourceManager.getInstance().getTexture("action_bar_bg");
 			var image:Image = new Image(texture);
+			image.smoothing = TextureSmoothing.NONE;
 			addChild(image);
 			
 			initReadyButton();
@@ -51,12 +52,7 @@ package view
 		
 		
 		private function initReadyButton():void {
-			var readyButton:ExtendedButton = new ExtendedButton(
-				ResourceManager.getInstance().getTexture("ready_up_btn"), 
-				"",
-				ResourceManager.getInstance().getTexture("ready_down_btn"), 
-				ResourceManager.getInstance().getTexture("ready_hover_btn")
-			);
+			var readyButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("ready_btn"));
 			
 			readyButton.x = 0;
 			readyButton.y = 660;

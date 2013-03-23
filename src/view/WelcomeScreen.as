@@ -12,7 +12,7 @@ package view
 	
 	public class WelcomeScreen extends Sprite
 	{
-		private var _playButton:ActionButton;
+		private var _playButton:ExtendedButton;
 		private var _timer:Timer;
 		private var _dotsContainer:Sprite;
 		

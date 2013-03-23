@@ -10,7 +10,6 @@ package view
 	
 	import managers.Manager;
 	
-	import model.ActionButtonVO;
 	import model.EntityVO;
 	import model.SquareVO;
 	
@@ -236,7 +235,7 @@ package view
 		//animate action bar entering the stage
 		public function showActionBar():void {
 			
-			var tween:Tween = new Tween(_actionBar, 1, Transitions.EASE_OUT);
+			var tween:Tween = new Tween(_actionBar, 1.2, Transitions.EASE_OUT);
 			tween.animate("x", _actionBar.x - 40);
 			Starling.juggler.add(tween);
 			tween.onComplete = onShowActionBarTweenComplete;

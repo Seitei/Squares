@@ -98,9 +98,7 @@ package view
 				
 				for(var j:int = 0; j < 7; j ++){
 					
-					var squareButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("square_up"), i + "_" + j, 1, null, null, "",
-						ResourceManager.getInstance().getTexture("square_down"),	
-						ResourceManager.getInstance().getTexture("square_hover"));
+					var squareButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("square"), {"type": 1, "row": i, "column": j});
 					
 					squareButton.x = i * 25;
 					squareButton.y = j * 25;
@@ -116,16 +114,16 @@ package view
 		
 		private function onSquareButtonClicked(e:Event):void {
 				
-			var i:int = int(ActionButton(e.currentTarget).actionType.substr(0, 1));
-			var j:int = int(ActionButton(e.currentTarget).actionType.substr(2, 1));
+			var i:int = ExtendedButton(e.currentTarget).data.row;
+			var j:int = ExtendedButton(e.currentTarget).data.column;
 
-			if(ActionButton(e.currentTarget).IsForced){
-				ActionButton(e.currentTarget).forceDownState(false);
+			if(ExtendedButton(e.currentTarget).isSelected){
+				ExtendedButton(e.currentTarget).selectDownState(false);
 				_entityData[1][i][j] = 0;					
 			}
 			else {
-				_entityData[1][i][j] = ActionButton(e.currentTarget).entityType;
-				ActionButton(e.currentTarget).forceDownState(true);
+				_entityData[1][i][j] = ExtendedButton(e.currentTarget).data.type;
+				ExtendedButton(e.currentTarget).selectDownState(true);
 			}
 		}
 		
@@ -165,13 +163,13 @@ package view
 		
 		private function changeCenterDispositionLayout(e:Event):void {
 		
-			if(_currentCenteredMode == ActionButton(e.currentTarget).actionType)
+			if(_currentCenteredMode == ExtendedButton(e.currentTarget).data.type)
 				return;
 			
-			_currentCenteredMode = ActionButton(e.currentTarget).actionType;
+			_currentCenteredMode = ExtendedButton(e.currentTarget).data.type;
 			_entityData[0] = _currentCenteredMode; 
 			
-			if(ActionButton(e.currentTarget).actionType == "squareCenteredMode"){
+			if(ExtendedButton(e.currentTarget).data.type == "squareCenteredMode"){
 				for(var i:int = 0; i < 7; i ++){
 					for(var j:int = 0; j < 7; j ++){
 						if(_squareCenteredMatrixDisposition[i][j] == 1){
@@ -184,7 +182,7 @@ package view
 				}
 			}
 			
-			if(ActionButton(e.currentTarget).actionType == "vertexCenteredMode"){
+			if(ExtendedButton(e.currentTarget).data.type == "vertexCenteredMode"){
 				for(var i2:int = 0; i2 < 7; i2 ++){
 					for(var j2:int = 0; j2 < 7; j2 ++){
 						if(_vertexCenteredMatrixDisposition[i2][j2] == 1){
@@ -277,69 +275,43 @@ package view
 		
 			////// entity formation buttons //////
 			
-			var formation1Button:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("formation_1_up"), "formation_1", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("formation_1_down"),	
-				ResourceManager.getInstance().getTexture("formation_1_hover"));
-			
+			var formation1Button:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("formation_1"), {"formation": "formation_1"});
 			formation1Button.x = 0;
 			formation1Button.y = -30;
 			addChild(formation1Button);
 			
-			var formation2Button:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("formation_2_up"),	"formation_2", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("formation_2_down"),
-				ResourceManager.getInstance().getTexture("formation_2_hover"));
-			
+			var formation2Button:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("formation_2"), {"formation": "formation_2"});
 			formation2Button.x = 40;
 			formation2Button.y = -22;
 			addChild(formation2Button);
 		
 		
-			var formation3Button:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("formation_3_up"),	"formation_3", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("formation_3_down"),
-				ResourceManager.getInstance().getTexture("formation_3_hover"));
-			
+			var formation3Button:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("formation_3"), {"formation": "formation_3"});
 			formation3Button.x = 80;
 			formation3Button.y = -30;
 			addChild(formation3Button);
 			
-			var formation4Button:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("formation_4_up"),	"formation_4", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("formation_4_down"),
-				ResourceManager.getInstance().getTexture("formation_4_hover"));
-			
+			var formation4Button:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("formation_4"), {"formation": "formation_4"});
 			formation4Button.x = 120;
 			formation4Button.y = -30;
 			addChild(formation4Button);
 			
-			var formation5Button:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("formation_5_up"), "formation_5", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("formation_5_down"),
-				ResourceManager.getInstance().getTexture("formation_5_hover"));
-			
+			var formation5Button:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("formation_5"), {"formation": "formation_5"});
 			formation5Button.x = 150;
 			formation5Button.y = -30;
 			addChild(formation5Button);
 		
 		
-		
-		
 			////// square type buttons //////
 			_squareTypesButtonsArray = new Array();
 			
-			var balancedSquareButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("balanced_square_up"), "changeSquareTypeToBalanced", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("balanced_square_down"),
-				ResourceManager.getInstance().getTexture("balanced_square_hover"));
+			var balancedSquareButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("balanced_square"), {"type": "balanced"});
 			
+			var lightweightSquareButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("lightweight"), {"type": "lightweight"});
 			
-			var lightweightSquareButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("lightweight_square_up"), "changeSquareTypeToLightweight", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("lightweight_square_down"),
-				ResourceManager.getInstance().getTexture("lightweight_square_hover"));
+			var armoredSquareButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("armored"), {"type": "armored"});
 			
-			var armoredSquareButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("armored_square_up"), "changeSquareTypeToArmored", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("armored_square_down"),
-				ResourceManager.getInstance().getTexture("armored_square_hover"));
-			
-			var glasscannonSquareButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("glasscannon_square_up"), "changeSquareTypeToGlasscannon", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("glasscannon_square_down"),
-				ResourceManager.getInstance().getTexture("glasscannon_square_hover"));
+			var glasscannonSquareButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("glass_cannon"), {"type": "glass_cannon"});
 			
 			balancedSquareButton.addEventListener("buttonTriggeredEvent", onSquareTypeButtonClicked);
 			lightweightSquareButton.addEventListener("buttonTriggeredEvent", onSquareTypeButtonClicked);
@@ -361,13 +333,9 @@ package view
 		
 			////// ok and cancel buttons //////
 			
-			var acceptButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("accept_entity_up"), "accept", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("accept_entity_down"),
-				ResourceManager.getInstance().getTexture("accept_entity_hover"));
+			var acceptButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("accept_entity"), {"accept": "accept"});
 			
-			var cancelButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("cancel_entity_up"), "cancel", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("cancel_entity_down"),
-				ResourceManager.getInstance().getTexture("cancel_entity_hover"));
+			var cancelButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("cancel_entity"), {"cancel": "cancel"});
 		
 			acceptButton.x = 195; acceptButton.y = 65;
 			cancelButton.x = 195; cancelButton.y = 95;	
@@ -380,13 +348,9 @@ package view
 			
 			////// tower/unit button //////
 			
-			var normalSquareButton:ActionButton = new ActionButton( ResourceManager.getInstance().getTexture("square_type_normal_up"), "normalSquare", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("square_type_normal_down"),
-				ResourceManager.getInstance().getTexture("square_type_normal_hover"));
+			var normalSquareButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("square_type_normal"), {"normal": "normal"});
 			
-			var towerSquareButton:ActionButton = new ActionButton( ResourceManager.getInstance().getTexture("square_type_tower_up"), "towerSquare", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("square_type_tower_down"),
-				ResourceManager.getInstance().getTexture("square_type_tower_hover"));
+			var towerSquareButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("square_type_tower"), {"tower": "tower"});
 			
 			normalSquareButton.x = -30; normalSquareButton.y = 65;
 			towerSquareButton.x = -33; towerSquareButton.y = 95;	
@@ -397,13 +361,9 @@ package view
 			
 			////// change center buttons //////
 		
-			var squareCenteredButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("square_centered_up"), "squareCenteredMode", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("square_centered_down"),
-				ResourceManager.getInstance().getTexture("square_centered_hover"));
+			var squareCenteredButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("square_centered"), {"squareCenteredMode": "squareCenteredMode"});
 			
-			var vertexCenteredButton:ActionButton =	new ActionButton( ResourceManager.getInstance().getTexture("vertex_centered_up"), "vertexCenteredMode", 0, null, null, "",
-				ResourceManager.getInstance().getTexture("vertex_centered_down"),
-				ResourceManager.getInstance().getTexture("vertex_centered_hover"));
+			var vertexCenteredButton:ExtendedButton = new ExtendedButton(ResourceManager.getInstance().getTextures("vertex_centered"), {"vertexCenteredMode": "vertexCenteredMode"});
 			
 			squareCenteredButton.x = 0; squareCenteredButton.y = 160;
 			vertexCenteredButton.x = 165; vertexCenteredButton.y = 160;	
@@ -429,16 +389,13 @@ package view
 		
 		private function onSquareTypeButtonClicked(e:Event):void {
 			
-			var ab:ActionButton = ActionButton(e.currentTarget);
-			ab.forceDownState(true);
+			var button:ExtendedButton = ExtendedButton(e.currentTarget);
+			button.selectDownState(true);
 			
-			for each(var button:ActionButton in _squareTypesButtonsArray) {
-				
-					if(button.actionType != ab.actionType)
-						button.forceDownState(false);
+			for each(var button2:ExtendedButton in _squareTypesButtonsArray) {
+					if(button2.data.type != button.data.type)
+						button2.selectDownState(false);
 			}
-			 
-			
 		}
 		
 		

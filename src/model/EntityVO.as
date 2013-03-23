@@ -7,8 +7,6 @@ package model
 	import starling.events.TouchEvent;
 	import starling.textures.Texture;
 	
-	import view.ActionButton;
-	
 	public class EntityVO
 	{
 		private static const SQUARE_SIZE:int = 9;
