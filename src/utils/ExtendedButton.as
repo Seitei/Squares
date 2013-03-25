@@ -4,6 +4,7 @@ package utils
 	import flash.geom.Rectangle;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
+	import flash.utils.Dictionary;
 	
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
@@ -33,10 +34,6 @@ package utils
 	{
 		private static const MAX_DRAG_DIST:Number = 50;
 		
-		private var _upStateTexture:Texture;
-		private var _downStateTexture:Texture; 
-		private var _hoverStateTexture:Texture;
-		
 		private var _data:Object;
 		private var _buttonImage:Image;
 		
@@ -45,23 +42,21 @@ package utils
 		private var _isHovered:Boolean;
 		private var _isSelected:Boolean;
 		private var _useHandCursor:Boolean;
-		private var _stateTexturesArray:Array;
 		private var _texturesArray:Vector.<Texture>;
+		private var _texturesDic:Dictionary;
 		
 		/** Creates a button with a vector of textures or an array of display objects that represent the different states*/
 		public function ExtendedButton(buttonStates:*, data:Object = null)
 		{
 			if (buttonStates.length == 0) throw new ArgumentError("Textures vector needs to have at least one texture state (up)");
 			
+			var regExp:RegExp = /_[a-z]+[0-9]+/;
 			_data = data;
 			_enabled = true;
 			_isDown = false;
 			_useHandCursor = true;
 			
-			_stateTexturesArray = new Array();
-			_stateTexturesArray.push(_upStateTexture);
-			_stateTexturesArray.push(_downStateTexture);
-			_stateTexturesArray.push(_hoverStateTexture);
+			_texturesDic = new Dictionary();
 			
 			if(buttonStates[0] is DisplayObject){
 				var count:int = 0;
@@ -76,10 +71,21 @@ package utils
 				_texturesArray = buttonStates;
 			}
 			
-			for (var i:int = 0; i < _stateTexturesArray.length; i ++){
-				_stateTexturesArray[i] = _texturesArray[i];
+			for (var i:int = 0; i < buttonStates.length; i ++){
+				
+				var id:String = _texturesArray[i].id;
+				id = id.substr(id.search(regExp));
+				id = id.substr(1, id.indexOf("00") - 1);
+				
+				_texturesDic[id] = _texturesArray[i];
 			}
 			
+			 
+			
+			
+			
+			_buttonImage = new Image(_texturesDic["up"]);
+				
 			addChild(_buttonImage);
 			addEventListener(TouchEvent.TOUCH, onTouch);
 		}
@@ -97,7 +103,7 @@ package utils
 		protected function resetContents():void
 		{
 			_isDown = false;
-			_buttonImage.texture = _isHovered ? _hoverStateTexture : _upStateTexture;
+			_buttonImage.texture = _isHovered ? _texturesDic["hover"] : _texturesDic["up"];
 		}
 		
 		private function onTouch(event:TouchEvent):void
@@ -128,11 +134,11 @@ package utils
 			if(!_isSelected){
 				if(hoverTouch) {
 					
-					_buttonImage.texture = _hoverStateTexture;
+					_buttonImage.texture = _texturesDic["hover"];
 				}
 				else {
 					
-					_buttonImage.texture = _upStateTexture;
+					_buttonImage.texture = _texturesDic["up"];
 				}
 			}
 			
@@ -144,7 +150,7 @@ package utils
 			
 			if (touch.phase == TouchPhase.BEGAN && !_isDown)
 			{
-				_buttonImage.texture = _downStateTexture;
+				_buttonImage.texture = _texturesDic["down"];
 				_isDown = true;
 			}
 			else if (touch.phase == TouchPhase.MOVED && _isDown)
@@ -181,7 +187,7 @@ package utils
 		
 		public function selectDownState(value:Boolean):void {
 			_isSelected = value;
-			_buttonImage.texture = value ? _downStateTexture : _upStateTexture;
+			_buttonImage.texture = value ? _texturesDic["down"] : _texturesDic["up"];
 		}
 		
 		

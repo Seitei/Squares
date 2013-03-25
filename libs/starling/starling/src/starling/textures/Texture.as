@@ -86,6 +86,7 @@ package starling.textures
     {
         private var mFrame:Rectangle;
         private var mRepeat:Boolean;
+		private var _id:String;
         
         /** helper object */
         private static var sOrigin:Point = new Point();
@@ -102,6 +103,16 @@ package starling.textures
             mRepeat = false;
         }
         
+		public function get id():String
+		{
+			return _id;
+		}
+
+		public function set id(value:String):void
+		{
+			_id = value;
+		}
+
         /** Disposes the underlying texture data. Note that not all textures need to be disposed: 
          *  SubTextures (created with 'Texture.fromTexture') just reference other textures and
          *  and do not take up resources themselves; this is also true for textures from an 

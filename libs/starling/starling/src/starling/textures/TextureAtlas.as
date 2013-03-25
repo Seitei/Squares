@@ -110,9 +110,13 @@ package starling.textures
         public function getTexture(name:String):Texture
         {
             var region:Rectangle = mTextureRegions[name];
-            
+            var texture:Texture;
             if (region == null) return null;
-            else return Texture.fromTexture(mAtlasTexture, region, mTextureFrames[name]);
+            else {
+				texture = Texture.fromTexture(mAtlasTexture, region, mTextureFrames[name]);
+				texture.id = name;
+				return texture;
+			}
         }
         
         /** Returns all textures that start with a certain string, sorted alphabetically

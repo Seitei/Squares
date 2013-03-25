@@ -97,7 +97,6 @@ package view
 		private function initActionbar():void {
 			_actionBar = new ActionBar();
 			//this way the starting position of the action bar is "hidden"
-			trace(this.width, this.height);
 			_actionBar.x = 740;
 			addChild(_actionBar);
 			trace(this.width, this.height);
