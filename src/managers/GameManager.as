@@ -137,16 +137,21 @@ package managers
 			
 			for each (var ent:EntityVO in activeEntities) {
 					
-			
+							
 				ent.loop();
 				
 			
 			}
 		}
 		
+		public function activateEntity(entity:EntityVO, activate:Boolean):void {
+			_world.activateEntity(entity, activate);
+		}
+		
+		
 		public function enterCores():void {
-			for each(var entity:EntityVO in _world.getEntities()){
-				_world.updateEntity(entity, "setRallypoint", new Point(350, 350), true);   
+			for each(var entity:EntityVO in _world.getEntitiesSubgroup("ally_core_entities", _playerName)){
+				_world.updateEntity(entity, "setRallypoint", new Point(350, 650), true);   
 			}
 		}
 		

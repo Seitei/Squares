@@ -96,6 +96,7 @@ package view
 		public function updateEntity(entity:EntityVO):void {
 			_spriteEntityDic[entity.id].x = entity.x;
 			_spriteEntityDic[entity.id].y = entity.y;
+			_spriteEntityDic[entity.id].rotation = entity.rotation;
 		}
 		
 		public function showTiles():void {

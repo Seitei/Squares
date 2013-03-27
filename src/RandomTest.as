@@ -13,6 +13,8 @@ package
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.filters.BlurFilter;
+	import starling.filters.FragmentFilter;
 	import starling.textures.RenderTexture;
 	import starling.utils.Color;
 	
@@ -25,26 +27,27 @@ package
 		{
 			
 			var object:Object = new Object();
-			
 			object.asd = "asd";
 			
-			var array:Array = new Array();
 			
-			array.push(object);
 			
-			var dic:Dictionary = new Dictionary();
-			dic["obj"] = object;
 			
-			array[0].asd = "qwe";
 			
-			trace(dic["obj"].asd);
-			trace(array[0].asd);
+			
+			
+			
+			
 			
 			
 		}
 			
 		
+		private 
 		
+		private function returnArray():Array{
+			
+			
+		}
 		
 		
 		

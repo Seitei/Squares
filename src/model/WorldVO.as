@@ -35,7 +35,6 @@ package model
 			_entitiesArray = new Vector.<EntityVO>;
 			
 			_entitiesSubgroupsDic = new Dictionary();
-			_entitiesSubgroupsDic["loopable_entities"] = new Vector.<EntityVO>;
 			
 			_playersNamesArray = new Array();
 		}
@@ -45,20 +44,23 @@ package model
 			return _entitiesDic;
 		}
 
-		public function updateEntity(entity:EntityVO, property:String, value:*, activateEntity:Boolean):void {
+		public function updateEntity(entity:EntityVO, property:String, value:*, activate:Boolean):void {
 			
-			if(_entitiesDic[entity.id].active != activateEntity){
-				if(activateEntity){
+			activateEntity(entity, activate);
+			
+			_entitiesDic[entity.id][property](value);
+		}
+		
+		public function activateEntity(entity:EntityVO, activate:Boolean):void {
+			if(_entitiesDic[entity.id].active != activate){
+				if(activate){
 					_entitiesSubgroupsDic["all" + "_active_entities"].push(entity);
 				}
 				else{
-					_entitiesSubgroupsDic["all" + "_active_entities"].splice(_entitiesSubgroupsDic[entity.owner + "_active_entities"].indexOf(entity, 0), 1);
+					_entitiesSubgroupsDic["all" + "_active_entities"].splice(_entitiesSubgroupsDic["all" + "_active_entities"].indexOf(entity, 0), 1);
 				}
+				_entitiesDic[entity.id].active = activate;
 			}
-			
-			_entitiesDic[entity.id].active = activateEntity;
-			_entitiesDic[entity.id][property](value);
-			
 		}
 		
 		private function createSubgroupVectors(owner:String):void {

@@ -3,6 +3,8 @@ package model
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
 	
+	import managers.GameManager;
+	
 	import starling.display.Sprite;
 	import starling.events.TouchEvent;
 	import starling.textures.Texture;
@@ -166,8 +168,11 @@ package model
 			return _y;
 		}
 		
-		public function move():void{
-			Movement.moveToPoint(this, rallypoint, speed);
+		public function move():void {
+			if(!Movement.moveToPoint(this, rallypoint, speed)){
+				behavior.splice(behavior.indexOf(move, 0), 1);
+				return;
+			}
 			updateGraphics();
 		}
 
@@ -187,7 +192,13 @@ package model
 		}
 
 		public function loop():void {
-	
+			
+			if(behavior.length == 0)
+				GameManager.getInstance().activateEntity(this, false);
+					
+			for each(var foo:Function in behavior){
+				foo();
+			}
 		}
 		
 		public function updateGraphics():void {
