@@ -11,6 +11,9 @@ package managers
 	import model.EntityVO;
 	import model.WorldVO;
 	
+	import starling.animation.Transitions;
+	import starling.animation.Tween;
+	import starling.core.Starling;
 	import starling.display.DisplayObject;
 	import starling.display.MovieClip;
 	import starling.display.Quad;
@@ -64,15 +67,15 @@ package managers
 					_world.addEntity(action.entity);
 					break;
 				case "setRallypoint":
-					_world.updateEntity(action.entity, "rallypoint", action.entity.rallypoint );
+					_world.updateEntity(action.entity, "rallypoint", action.entity.rallypoint, true);
 					break;
 				case "upgrade":
-					_world.updateEntity(action.entity, "applyLevel", action.entity.level + 1);
+					_world.updateEntity(action.entity, "applyLevel", action.entity.level + 1, false);
 					renderEntity(action.entity);
 					break;
 				case "issueEntity":
 					action.target = _world.getEntitiesSubgroup("ally_core_entities", _playerName)[0];
-					_world.updateEntity(action.target, "issuedEntity", action.entity);
+					_world.updateEntity(action.target, "issueEntity", action.entity, true);
 			}
 		}
 		
@@ -83,8 +86,8 @@ package managers
 			for each ( var action:Action in buffer) {
 	
 				if(action.entity){
-					action.entity.position.x = 700 - action.entity.position.x;
-					action.entity.position.y = 700 - action.entity.position.y;
+					action.entity.x = 700 - action.entity.x;
+					action.entity.y = 700 - action.entity.y;
 				}
 				
 				if(action.type == "addEntity"){
@@ -98,7 +101,6 @@ package managers
 				if(action.type == "setRallypoint"){
 					action.entity.rallypoint.x = 700 - action.entity.rallypoint.x;
 					action.entity.rallypoint.y = 700 - action.entity.rallypoint.y;
-					//Manager.getInstance().getUI().showRallyPoint(action.entity.position, action.entity.rallypoint, SlotPlacementGuide.getInstance().getInvertedRow(action.target.row), "last");
 				}
 				
 				updateWorld(action);
@@ -114,8 +116,7 @@ package managers
 		}
 		
 		public function loop():void {
-			if (_state == GameStatus.PLAYING || _state == GameStatus.COUNTDOWN_PLAYING)
-				updateEntities();	
+			updateEntities();	
 		}
 		
 		private function getEntitiesSubgroup(reqs:Array, owner:String):Array {
@@ -130,35 +131,22 @@ package managers
 		}
 		
 		private function updateEntities():void {
-			var spriteEntities:Dictionary = Main.getInstance().getRenderer().getSpriteEntitiesDic();
-			//we only consider the loopable entities
-			var entities:Vector.<EntityVO> = _world.getEntitiesSubgroup("loopable_entities", "all");
 			
-			for each (var ent:EntityVO in entities) {
+			//we only consider the active entities
+			var activeEntities:Vector.<EntityVO> = _world.getEntitiesSubgroup("active_entities", "all");
+			
+			for each (var ent:EntityVO in activeEntities) {
 					
-				//ent.loop(getEntitiesSubgroup(ent.behaviorReqs, ent.owner));
-					
-					
+			
+				ent.loop();
 				
-				
-				//detect if another unit is in range
-				/*if(ent is ITargeter && ent.status != UnitStatus.BUILDING) {
-					(ent).canSpawn = false;
-					for each(var target:EntityVO in entities) {
-						if(target is ITargeteable && ent.owner != target.owner) {
-							var entPoint:Point = ent.position.clone();
-							var targetPoint:Point = target.position.clone();
-							var dist:Number = Point.distance(entPoint, targetPoint);
-							if(dist < ITargeter(ent).targetRange){
-								(ent).canSpawn = true;
-								(ent).rallypoint = targetPoint;
-								break;
-							}
-						}
-					}
-				}*/
-					
-				
+			
+			}
+		}
+		
+		public function enterCores():void {
+			for each(var entity:EntityVO in _world.getEntities()){
+				_world.updateEntity(entity, "setRallypoint", new Point(350, 350), true);   
 			}
 		}
 		

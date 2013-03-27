@@ -7,6 +7,10 @@ package model
 	import starling.events.TouchEvent;
 	import starling.textures.Texture;
 	
+	import utils.Movement;
+	
+	import view.Renderer;
+	
 	public class EntityVO
 	{
 		private static const SQUARE_SIZE:int = 9;
@@ -14,27 +18,59 @@ package model
 
 		private var _x:Number;
 		private var _y:Number;
-		private var _position:Point;
 		private var _type:String;
 		private var _id:String;
 		private var _status:String;
 		private var _owner:String;
 		private var _rotation:Number;
 		private var _rallypoint:Point;
-		private var _positionDest:Point;
 		private var _level:int;
 		private var _data:Array;
 		private var _squaresData:Vector.<SquareVO>;
+		private var _active:Boolean;
+		private var _behavior:Array;
+		private var _speed:Number;
 		
 		public function EntityVO()
 		{
-			position = new Point();
 			_rotation = 0;
 			initData();
 			_squaresData = new Vector.<SquareVO>;
+			_behavior = new Array();
 		}
 		
 		//default value for the matrix data
+
+		public function get speed():Number
+		{
+			return _speed;
+		}
+
+		public function set speed(value:Number):void
+		{
+			_speed = value;
+		}
+
+		public function get behavior():Array
+		{
+			return _behavior;
+		}
+
+		public function set behavior(value:Array):void
+		{
+			_behavior = value;
+		}
+
+		public function get active():Boolean
+		{
+			return _active;
+		}
+
+		public function set active(value:Boolean):void
+		{
+			_active = value;
+		}
+
 		private function initData():void {
 			
 			_data = new Array();
@@ -53,11 +89,6 @@ package model
 			return _squaresData;
 		}
 
-		public function set squaresData(value:Vector.<SquareVO>):void
-		{
-			_squaresData = value;
-		}
-
 		public function get data():Array
 		{
 			return _data;
@@ -66,10 +97,10 @@ package model
 		public function set data(value:Array):void
 		{
 			_data = value;
-			arrangeSquares();
+			createSquares();
 		}
 
-		private function arrangeSquares():void {
+		private function createSquares():void {
 			
 			for(var i:int = 0; i < _data[1].length; i++) {
 				
@@ -119,29 +150,25 @@ package model
 			_level = value;
 		}
 
-		public function get positionDest():Point
-		{
-			return _positionDest;
-		}
-
-		public function set positionDest(value:Point):void
-		{
-			_positionDest = value;
-		}
-
 		public function get rallypoint():Point
 		{
 			return _rallypoint;
 		}
 
-		public function set rallypoint(value:Point):void
+		public function setRallypoint(value:Point):void
 		{
 			_rallypoint = value;
+			behavior.push(move);
 		}
 
 		public function get y():Number
 		{
 			return _y;
+		}
+		
+		public function move():void{
+			Movement.moveToPoint(this, rallypoint, speed);
+			updateGraphics();
 		}
 
 		public function set y(value:Number):void
@@ -159,8 +186,12 @@ package model
 			_x = value;
 		}
 
-		public function loop(behaviorReqsContent:Array):void {
-			
+		public function loop():void {
+	
+		}
+		
+		public function updateGraphics():void {
+			Renderer.getInstance().updateEntity(this);
 		}
 		
 		public function get rotation():Number
@@ -202,17 +233,5 @@ package model
 		{
 			_id = value;
 		}
-
-		public function get position():Point
-		{
-			return _position;
-		}
-
-		public function set position(value:Point):void
-		{
-			_position = value;
-		}
-
-		
 	}
 }

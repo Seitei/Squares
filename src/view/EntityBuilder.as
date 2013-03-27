@@ -35,6 +35,12 @@ package view
 		private var _bgImage:Image;
 		private var _playerName:String;
 		
+		//TODO
+		public function reset():void {
+			
+			
+		}
+		
 		public function get playerName():String
 		{
 			return _playerName;

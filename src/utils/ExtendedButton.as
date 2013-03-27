@@ -51,7 +51,7 @@ package utils
 			if (buttonStates.length == 0) throw new ArgumentError("Textures vector needs to have at least one texture state (up)");
 			
 			var regExp:RegExp = /_[a-z]+[0-9]+/;
-			_data = data;
+			_data = data ? data : new Object();
 			_enabled = true;
 			_isDown = false;
 			_useHandCursor = true;
@@ -79,9 +79,6 @@ package utils
 				
 				_texturesDic[id] = _texturesArray[i];
 			}
-			
-			 
-			
 			
 			
 			_buttonImage = new Image(_texturesDic["up"]);

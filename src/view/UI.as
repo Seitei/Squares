@@ -1,7 +1,7 @@
 package view
 {
 	import actions.Action;
-		
+	
 	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	import flash.ui.Mouse;
@@ -64,13 +64,15 @@ package view
 		private var _pressingShift:Boolean;
 		private var _touchedPoint:Point;
 		private var _entityBuilder:EntityBuilder;
-		private var _entityIssued:EntityVO;
+		private var _currentEntity:EntityVO;
+		private var _issuedEntities:Array;
 		
 		public var online:Boolean;
 		
 		public function UI(showDebugData:Boolean)
 		{
 			_statusArray = new Array();
+			_issuedEntities = new Array();
 			initActionbar();
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			
@@ -100,7 +102,8 @@ package view
 			_actionBar.x = 740;
 			addChild(_actionBar);
 			trace(this.width, this.height);
-			_actionBar.addEventListener("ReadyEvent", sendReadyEvent);
+			_actionBar.addEventListener("readyEvent", sendReadyEvent);
+			
 				
 		}
 		
@@ -133,7 +136,6 @@ package view
 				Mouse.show();
 				removeChild(_mouseCursorImage);
 				_mouseCursorImage.dispose();
-				//removeChild(_slotPlacementGuide);
 				_actionIssued = null;
 			}
 			
@@ -141,7 +143,6 @@ package view
 				Mouse.show();
 				removeChild(_mouseCursorImage);
 				_mouseCursorImage.dispose();
-				//removeChild(_slotPlacementGuide);
 				_actionIssued = null;
 			}
 		}
@@ -160,16 +161,23 @@ package view
 					_entityBuilder.addEventListener("cancel", onEntityBuildCancel);
 					_entityBuilder.addEventListener("build", onEntityBuildAccept);
 				}
-				if(_entityIssued){
+				if(_currentEntity){
 					stage.removeEventListener(TouchEvent.TOUCH, onMove);
 					Mouse.show();
-					_entityIssued.position = new Point(touch.globalX, touch.globalY);
-					var action:Action = new Action("issueEntity", _entityIssued);
+					_currentEntity.x = touch.globalX;
+					_currentEntity.y = touch.globalY;
+					var action:Action = new Action("issueEntity", _currentEntity);
 					dispatchEventWith("issueAction", false, action);
+					var spriteEntity:SpriteEntity = new SpriteEntity(_currentEntity.id);
+					_mouseCursorImage.alpha = 0.5;
+					spriteEntity.addChild(_mouseCursorImage);
+					_issuedEntities.push(spriteEntity);
+					addChild(spriteEntity);
 					removeChild(_mouseCursorImage, true);
-					_entityIssued = null;
+					_currentEntity = null;
 				}
 				else{
+					_entityBuilder.reset();
 					_entityBuilder.visible = true;
 				}
 			}
@@ -182,7 +190,7 @@ package view
 		private function onEntityBuildAccept(e:Event, entity:EntityVO):void {
 			
 			_entityBuilder.visible = false;
-			_entityIssued = entity;
+			_currentEntity = entity;
 			Mouse.hide();
 			createGhostEntityImage(entity.squaresData);
 			stage.addEventListener(TouchEvent.TOUCH, onMove);
@@ -213,7 +221,7 @@ package view
 				
 				if(_actionIssued && entity.owner == _playerName) {
 				
-					_actionIssued.entity.position = entity.position.clone();
+				//	_actionIssued.entity.position = entity.position.clone();
 					
 				}		
 				else {

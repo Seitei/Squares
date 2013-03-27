@@ -45,23 +45,20 @@ package model
 			return _entitiesDic;
 		}
 
-		public function updateEntity(entity:EntityVO, property:String = "", value:* = null):void {
+		public function updateEntity(entity:EntityVO, property:String, value:*, activateEntity:Boolean):void {
 			
-			var count:int= 0;
-			for each(var ent:EntityVO in _entitiesArray) {
-				if(ent.id == entity.id) {
-					if(property == ""){
-						_entitiesArray[count] = entity;
-						_entitiesDic[entity.id] = entity;
-					}
-					else{
-						_entitiesArray[count][property] = value;
-						_entitiesDic[entity.id][property] = value;
-					}
-					break;
+			if(_entitiesDic[entity.id].active != activateEntity){
+				if(activateEntity){
+					_entitiesSubgroupsDic["all" + "_active_entities"].push(entity);
 				}
-				count++;
+				else{
+					_entitiesSubgroupsDic["all" + "_active_entities"].splice(_entitiesSubgroupsDic[entity.owner + "_active_entities"].indexOf(entity, 0), 1);
+				}
 			}
+			
+			_entitiesDic[entity.id].active = activateEntity;
+			_entitiesDic[entity.id][property](value);
+			
 		}
 		
 		private function createSubgroupVectors(owner:String):void {
@@ -70,6 +67,7 @@ package model
 				_entitiesSubgroupsDic[owner] = new Vector.<EntityVO>;
 				_entitiesSubgroupsDic[owner + "_attackable_entities"] = new Vector.<EntityVO>;
 				_entitiesSubgroupsDic[owner + "_core_entities"] = new Vector.<EntityVO>;
+				_entitiesSubgroupsDic["all" + "_active_entities"] = new Vector.<EntityVO>;
 			}
 		}
 		
@@ -82,18 +80,11 @@ package model
 			_entitiesSubgroupsDic[entity.owner].push(entity);
 			
 			
+			
 			if(entity.type == "core"){
 				_entitiesSubgroupsDic[entity.owner + "_core_entities"].push(entity);
 			}
 			
-			/*if(entity.attackable){
-				_entitiesSubgroupsDic[entity.owner + "_attackable_entities"].push(entity);
-			}
-			
-
-			if(entity.parentContainer)
-				_entitiesDic[entity.parentContainer].childEntity = entity.id;
-			*/			
 			_entitiesArray.push(entity);
 			_entitiesDic[entity.id] = entity;	
 				
@@ -109,10 +100,7 @@ package model
 				
 				if(entityVector.indexOf(entity, 0) != -1)
 					entityVector.splice(entityVector.indexOf(entity, 0), 1);
-					
 			}
-			
-			
 		}
 		
 		private function getEnemyName(owner:String):String {
@@ -137,12 +125,12 @@ package model
 					return _entitiesSubgroupsDic[getEnemyName(owner) + "_attackable_entities"];
 					break;
 				
-				case "all_entities":
-					return _entitiesArray;
-					break;
-				
 				case "ally_core_entities":
 					return _entitiesSubgroupsDic[owner + "_core_entities"];
+					break;
+				
+				case "active_entities":
+					return _entitiesSubgroupsDic["all" + "_active_entities"];
 					break;
 				
 				default:

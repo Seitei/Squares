@@ -80,14 +80,11 @@ package managers
 			_ui.addEventListener("issueAction", handler);
 		}
 		
-		private function onBuildEntity(e:Event, entity:EntityVO):void {
-			
-			
-		}
-		
 		private function onActionBarTweenCompleted(e:Event):void {
 			
-			Main.getInstance().getRenderer().enterCores();
+			_gameManager.enterCores();
+			_main.activateEnterFrame(true);
+			
 		}
 		
 		
@@ -226,7 +223,6 @@ package managers
 				_player.sendReadyMessage(_playerName);
 				
 			}
-			
 		}
 		
 		private function showStatus(e:Event, status:String):void {
@@ -240,10 +236,6 @@ package managers
 			}*/
 			
 			_gameManager.updateWorld(action);
-			
-		}
-		
-		private function provideReqsContent(req:String):* {
 			
 		}
 		
@@ -300,7 +292,7 @@ package managers
 			return _instance;
 		}
 		
-		public function loop(e:Event):void {
+		public function loop():void {
 			_gameManager.loop();
 		}
 		

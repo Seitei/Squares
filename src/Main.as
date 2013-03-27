@@ -114,7 +114,14 @@ package
 		}
 		
 		private function loop(event:Event):void {
-			_manager.loop(event);
+			_manager.loop();
+		}
+		
+		public function activateEnterFrame(value:Boolean):void {
+			if(value)
+				addEventListener(Event.ENTER_FRAME, loop);
+			else
+				removeEventListener(Event.ENTER_FRAME, loop);
 		}
 		
 		public function storeStatusData(status:String):void {

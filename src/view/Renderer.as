@@ -68,7 +68,7 @@ package view
 			
 			var spriteEntity:SpriteEntity = new SpriteEntity(entity.id);
 				
-			spriteEntity.x = entity.position.x; spriteEntity.y = entity.position.y;
+			spriteEntity.x = entity.x; spriteEntity.y = entity.y;
 			
 			spriteEntity.pivotX = spriteEntity.width/2; spriteEntity.pivotY = spriteEntity.height/2;
 			
@@ -93,6 +93,11 @@ package view
 			addChild(quad); quad.x = entity.position.x; quad.y = entity.position.y;*/
 		}
 		
+		public function updateEntity(entity:EntityVO):void {
+			_spriteEntityDic[entity.id].x = entity.x;
+			_spriteEntityDic[entity.id].y = entity.y;
+		}
+		
 		public function showTiles():void {
 			for(var i:int = 0; i < _tilesArray.length; i++){
 				_tilesArray[i].visible = true;
@@ -109,41 +114,6 @@ package view
 			removeChild(_spriteEntityDic[entityId], true);
 		}
 		
-		public function addCores(entity:EntityVO):void {
-			//my core
-			_myCore = new Sprite();
-			addChild(_myCore);
-			var quad:Quad = new Quad(50, 50);
-			_myCore.addChild(quad);
-			_myCore.x = 350; _myCore.y = 700 + 50;
-			
-			//enemmy ship
-			_enemyCore = new Sprite();
-			addChild(_enemyCore);
-			var quad2:Quad = new Quad(50, 50);
-			_enemyCore.addChild(quad2);
-			_enemyCore.x = 350; _enemyCore.y = -100;
-			
-		}
-		
-		public function enterCores():void {
-			
-			/*var tweenMyCore:Tween = new Tween(_myCore, 3, Transitions.EASE_OUT);
-			tweenMyCore.animate("y", _myCore.y - 100);
-			Starling.juggler.add(tweenMyCore);
-			
-			var tweenEnemyCore:Tween = new Tween(_enemyCore, 3, Transitions.EASE_OUT);
-			tweenEnemyCore.animate("y", _enemyCore.y + 100);
-			Starling.juggler.add(tweenEnemyCore);
-			
-			tweenEnemyCore.onComplete = onCoresAnimationComplete;*/
-			
-		}
-		
-		private function onCoresAnimationComplete():void {
-			_manager.onEnterCoresComplete();
-		}
-		
 		public function addBackground():void {
 			var image:Image = new Image(ResourceManager.getInstance().getTexture("background"));
 			addChild(image);
@@ -151,6 +121,10 @@ package view
 		
 		public function getSpriteEntitiesDic():Dictionary {
 			return _spriteEntityDic;
+		}
+		
+		public function getSpriteEntity(id:String):SpriteEntity {
+			return _spriteEntityDic[id];
 		}
 		
 		private function onTouch(e:TouchEvent):void {
