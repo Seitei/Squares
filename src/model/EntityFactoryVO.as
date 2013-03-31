@@ -8,7 +8,7 @@ package model
 	
 	import utils.UnitStatus;
 
-	public class EntityFactoryVO extends EntityVO
+	public class EntityFactoryVO
 	{
 		private static const BOT:int = 1;
 		private static const TOP:int = 0;
@@ -31,33 +31,32 @@ package model
 			_playerName = value;
 		}
 		
-		public function makeEntity(player:String, type:String, tier:int, position:Point = null):EntityVO {
+		public function makeEntity(player:String, type:String, tier:int, positionX:int = 0, positionY:int = 0):EntityVO {
 			
 			var entity:EntityVO;
 			
-			if(!position) 
-				position = new Point();
-			
 			switch(type){
 				
+				case "square":
+					entity = new SquareVO(positionX, positionY);		
+					break;
+				
 				case "core":
-					entity = new CoreVO(position.x, position.y);		
+					entity = new CoreVO(positionX, positionY);		
 					break;
 				
 				case "tower":
-					entity = new TowerVO(position.x, position.y);		
+					entity = new TowerVO(positionX, positionY);		
 					break;
 				
 				case "unit":
-					entity = new UnitVO(position.x, position.y);		
+					entity = new UnitVO(positionX, positionY);		
 					break;
 				
 				case "spawner":
-					entity = new SpawnerVO(position.x, position.y);		
+					entity = new SpawnerVO(positionX, positionY);		
 					break;
 			}
-			
-			entity.status = "building";
 			
 			_counter ++;
 			entity.owner = player;

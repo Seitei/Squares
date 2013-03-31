@@ -1,53 +1,47 @@
 package model
 {
-	import flash.geom.Point;
-
-	public class SquareVO
+	public class SquareVO extends EntityVO
 	{
-		private var _entityId:String;
-		private var _type:String;
-		private var _status:String;
-		private var _relativePosition:Point;
+		private var _squareType:String;
+		private var _relativePositionX:Number;
+		private var _relativePositionY:Number;
 		
-		public function SquareVO(type:String, relativePosition:Point)
+		public function SquareVO(posX:int, posY:int)
 		{
-			_type = type;
-			_relativePosition = relativePosition;
+			super("square");
+			x = posX;
+			y = posY;
+			
 		}
 
-		public function get status():String
+		public function get squareType():String
 		{
-			return _status;
+			return _squareType;
 		}
 
-		public function set status(value:String):void
+		public function set squareType(value:String):void
 		{
-			_status = value;
+			_squareType = value;
 		}
-
-		public function get entityId():String
+		
+		public function get relativePositionY():Number
 		{
-			return _entityId;
+			return _relativePositionY;
 		}
-
-		public function set entityId(value:String):void
+		
+		public function set relativePositionY(value:Number):void
 		{
-			_entityId = value;
+			_relativePositionY = value;
 		}
-
-		public function get relativePosition():Point
+		
+		public function get relativePositionX():Number
 		{
-			return _relativePosition;
+			return _relativePositionX;
 		}
-
-		public function set relativePosition(value:Point):void
+		
+		public function set relativePositionX(value:Number):void
 		{
-			_relativePosition = value;
-		}
-
-		public function get type():String
-		{
-			return _type;
+			_relativePositionX = value;
 		}
 
 	}

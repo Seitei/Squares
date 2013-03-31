@@ -133,7 +133,7 @@ package managers
 				_turn = "myTurn";
 			}
 			
-			var myCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, new Point(350, 725));
+			var myCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, 350, 650);
 			var myCoreAction:Action = new Action("addEntity", myCore);
 			
 			var myData:Array = new Array();
@@ -153,7 +153,7 @@ package managers
 			
 			//if not online, we force a send with different id and owner to create the enemy core as well
 			if(!online){
-				var enemyCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, new Point(350, -25));
+				var enemyCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, 350, -25);
 				enemyCore.owner = "TEST";
 				enemyCore.id = "TEST" + enemyCore.id.substring(enemyCore.id.indexOf("_"));
 				

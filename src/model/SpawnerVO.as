@@ -4,7 +4,9 @@ package model
 	{
 		public function SpawnerVO(posX:int, posY:int)
 		{
-			super();
+			super("spawner");
+			x = posX;
+			y = posY;
 		}
 	}
 }

@@ -204,8 +204,8 @@ package view
 			for(var i:int = 0; i < squaresData.length; i ++){
 				var quad:Quad = new Quad(9, 9, 0x00A551);
 				quad.alpha = 0.5;
-				quad.x = squaresData[i].relativePosition.x;
-				quad.y = squaresData[i].relativePosition.y;
+				quad.x = squaresData[i].relativePositionX;
+				quad.y = squaresData[i].relativePositionY;
 				_mouseCursorImage.addChild(quad);
 			}
 			

@@ -4,7 +4,7 @@ package model
 	{
 		public function UnitVO(posX:int, posY:int)
 		{
-			super();
+			super("unit");
 		}
 	}
 }

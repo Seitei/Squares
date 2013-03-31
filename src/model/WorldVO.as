@@ -47,8 +47,8 @@ package model
 		public function updateEntity(entity:EntityVO, property:String, value:*, activate:Boolean):void {
 			
 			activateEntity(entity, activate);
-			
 			_entitiesDic[entity.id][property](value);
+			
 		}
 		
 		public function activateEntity(entity:EntityVO, activate:Boolean):void {

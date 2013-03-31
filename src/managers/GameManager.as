@@ -79,6 +79,11 @@ package managers
 			}
 		}
 		
+		public function addEntity(entity:EntityVO):void {
+			renderEntity(entity);
+			_world.addEntity(entity);
+		}
+		
 		//here I receive the other's players actions
 		public function updatePlayersWorld(buffer:Vector.<Action>):void {
 			
@@ -130,6 +135,8 @@ package managers
 			return entitiesSubgroup;
 		}
 		
+		
+		
 		private function updateEntities():void {
 			
 			//we only consider the active entities
@@ -148,10 +155,13 @@ package managers
 			_world.activateEntity(entity, activate);
 		}
 		
+		public function updateEntity(entity:EntityVO, property:String, value:*, activate:Boolean):void {
+			_world.updateEntity(entity, property, value, activate); 
+		}
 		
 		public function enterCores():void {
 			for each(var entity:EntityVO in _world.getEntitiesSubgroup("ally_core_entities", _playerName)){
-				_world.updateEntity(entity, "setRallypoint", new Point(350, 650), true);   
+				_world.updateEntity(entity, "setRallypoint", new Point(550, 450), true);   
 			}
 		}
 		

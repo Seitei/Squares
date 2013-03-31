@@ -6,6 +6,7 @@ package view
 	import managers.Manager;
 	
 	import model.EntityVO;
+	import model.SquareVO;
 	
 	import starling.animation.Juggler;
 	import starling.animation.Transitions;
@@ -40,13 +41,13 @@ package view
 		private var _playerName:String;
 		private var _stateChangeRelatedAnimationsDic:Dictionary;
 		private var _hoveredEntity:MovieClipContainer;
-		private var _backgroundImagesArray:Array;
-		private var _prevBGImage:int;
-		private var _nextBGImage:int;
 		private var _bgContainer:Sprite;
 		private var _myCore:Sprite;
 		private var _enemyCore:Sprite;
 		private var _tilesArray:Array;
+		private var _squaresArray:Array;
+		private var _pivotX2:Number = 0;
+		private var _pivotY2:Number = 0;
 		
 		public function Renderer()
 		{
@@ -57,6 +58,7 @@ package view
 			_bgContainer.touchable = false;
 			_tilesArray = new Array();
 			addChild(_bgContainer);
+			_squaresArray new Array();
 		}
 		
 		public function set playerName(value:String):void
@@ -70,22 +72,36 @@ package view
 				
 			spriteEntity.x = entity.x; spriteEntity.y = entity.y;
 			
-			spriteEntity.pivotX = spriteEntity.width/2; spriteEntity.pivotY = spriteEntity.height/2;
-			
-			if(entity.rotation)
-				spriteEntity.rotation = entity.rotation; 
+			spriteEntity.rotation = entity.rotation; 
 			
 			_spriteEntityDic[entity.id] = spriteEntity;
 			
 			spriteEntity.addEventListener(TouchEvent.TOUCH, onTouch);
 			spriteEntity.useHandCursor = true;
 			
-			for(var i:int = 0; i < entity.squaresData.length; i ++){
+			for each(var square:SquareVO in entity.squaresData){
 				var quad:Quad = new Quad(9, 9, 0x00A551);
-				quad.x = entity.squaresData[i].relativePosition.x;
-				quad.y = entity.squaresData[i].relativePosition.y;
+				quad.x = square.relativePositionX;
+				quad.y = square.relativePositionY;
+				
+				if(Math.abs(quad.x) > Math.abs(_pivotX2))
+					_pivotX2 = quad.x;
+				
+				if(Math.abs(quad.y) > Math.abs(_pivotY2))
+					_pivotY2 = quad.y;
+				
 				spriteEntity.addChild(quad);
 			}
+			
+			if(entity.type == "square"){
+				var quad2:Quad = new Quad(9, 9, 0x00A551);
+				quad2.x = 0;
+				quad2.y = 0;
+				spriteEntity.addChild(quad2);
+			}
+			
+			//the pivot is calculated so it takes into account how the squares are orranged
+			spriteEntity.pivotX = _pivotX2 / 2; spriteEntity.pivotY = _pivotY2 / 2;
 			
 			addChild(spriteEntity);
 			

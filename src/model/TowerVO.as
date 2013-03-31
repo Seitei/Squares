@@ -4,7 +4,7 @@ package model
 	{
 		public function TowerVO(posX:int, posY:int)
 		{
-			super();
+			super("tower");
 		}
 	}
 }

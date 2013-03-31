@@ -1,6 +1,7 @@
 package model
 {
 	import flash.geom.Point;
+	import flash.text.engine.EastAsianJustifier;
 	import flash.utils.Dictionary;
 	
 	import managers.GameManager;
@@ -32,17 +33,22 @@ package model
 		private var _active:Boolean;
 		private var _behavior:Array;
 		private var _speed:Number;
+		private var _timePassed:Number = 0;
+		private var _moveInstance:Movement;
 		
-		public function EntityVO()
+		public function EntityVO(type:String)
 		{
+			_type = type;
 			_rotation = 0;
-			initData();
-			_squaresData = new Vector.<SquareVO>;
+			if(type != "square"){
+				initData();
+				_squaresData = new Vector.<SquareVO>;
+			}
 			_behavior = new Array();
+			_speed = 1;
+			_moveInstance = new Movement();
 		}
 		
-		//default value for the matrix data
-
 		public function get speed():Number
 		{
 			return _speed;
@@ -121,7 +127,11 @@ package model
 							point.y = j * (SQUARE_SIZE + SEP) - (SQUARE_SIZE + SEP) * 4;
 						}
 						
-						_squaresData.push(new SquareVO(_data[1][i][j], point));
+						var square:SquareVO = new SquareVO(point.x + this.x, point.y + this.y);
+						square.squareType = _data[1][i][j];
+						square.relativePositionX = point.x;
+						square.relativePositionY = point.y;
+						_squaresData.push(square);
 						
 					}
 				}
@@ -169,13 +179,19 @@ package model
 		}
 		
 		public function move():void {
-			if(!Movement.moveToPoint(this, rallypoint, speed)){
+			
+			_timePassed += _speed;
+			
+			if(_moveInstance.carLikeMove(this, _timePassed, _rallypoint, 200)){
 				behavior.splice(behavior.indexOf(move, 0), 1);
-				return;
 			}
+				
 			updateGraphics();
 		}
 
+		
+		
+			   
 		public function set y(value:Number):void
 		{
 			_y = value;

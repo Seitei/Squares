@@ -21,7 +21,7 @@ package
 			// create our Starling instance
 			mStarling = new Starling(Main, stage);
 			// set anti-aliasing (higher the better quality but slower performance)
-			mStarling.antiAliasing = 1;
+			mStarling.antiAliasing = 4;
 			
 			// start it!
 			mStarling.start();
