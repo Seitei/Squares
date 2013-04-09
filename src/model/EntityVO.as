@@ -33,7 +33,6 @@ package model
 		private var _active:Boolean;
 		private var _behavior:Array;
 		private var _speed:Number;
-		private var _timePassed:Number = 0;
 		private var _moveInstance:Movement;
 		
 		public function EntityVO(type:String)
@@ -180,9 +179,7 @@ package model
 		
 		public function move():void {
 			
-			_timePassed += _speed;
-			
-			if(_moveInstance.carLikeMove(this, _timePassed, _rallypoint, 200)){
+			if(_moveInstance.carLikeMove(this, rallypoint)){
 				behavior.splice(behavior.indexOf(move, 0), 1);
 			}
 				

@@ -6,6 +6,7 @@ package
 	
 	import starling.display.BlendMode;
 	import starling.display.Button;
+	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Quad;
 	import starling.display.Sprite;
@@ -25,35 +26,30 @@ package
 		
 		public function RandomTest()
 		{
+			var quad1:Quad = new Quad(200, 200, 0xff0000);
 			
-			var object:Object = new Object();
-			object.asd = "asd";
+			var quad2:Quad = new Quad(200, 200, 0x00ff00);
+			
+			addChild(quad1);
+			
+			quad2.x = 100;
+			quad2.y = 100;
+			addChild(quad2);
+			
+			var quad:DisplayObject = this.getChildAt(0);
 			
 			
 			
 			
 			
 			
-			
-			
-			
-			
-			
-		}
-			
-		
-		private 
-		
-		private function returnArray():Array{
 			
 			
 		}
+			
 		
-		
-		
-		
-		
-		
+		 
+	
 		
 		
 		

@@ -116,7 +116,6 @@ package managers
 			
 			switch(_state){
 				case GameStatus.INIT:
-					trace("INIT");
 					buildCore();
 					Main.getInstance().removeWelcomeScreen();
 					break;
@@ -133,7 +132,8 @@ package managers
 				_turn = "myTurn";
 			}
 			
-			var myCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, 350, 650);
+			var myCore:EntityVO = EntityFactoryVO.getInstance().makeEntity(_playerName, "core", 1, 350, 350);
+			myCore.rotation = 0;
 			var myCoreAction:Action = new Action("addEntity", myCore);
 			
 			var myData:Array = new Array();

@@ -27,6 +27,7 @@ package managers
 	import utils.MovieClipContainer;
 	import utils.UnitStatus;
 	
+	import view.Renderer;
 	import view.SpriteEntity;
 
 	public class GameManager
@@ -161,7 +162,8 @@ package managers
 		
 		public function enterCores():void {
 			for each(var entity:EntityVO in _world.getEntitiesSubgroup("ally_core_entities", _playerName)){
-				_world.updateEntity(entity, "setRallypoint", new Point(550, 450), true);   
+				_world.updateEntity(entity, "setRallypoint", new Point(650, 150), true);   
+				Renderer.getInstance().drawPoint(new Point(650, 150));
 			}
 		}
 		

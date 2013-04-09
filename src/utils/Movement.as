@@ -9,96 +9,135 @@ package utils
 	
 	public class Movement
 	{
+		private static const DEGREE:Number = Math.PI / 180;
+		private var _aDegree:Number;
 		private var _instance:Movement;
-		private var _originalValue:Object;
-		private var _finalValue:Object;
+		private var _init:Boolean = false;
+		private var _rallyPointX:Number;
+		private var _rallyPointY:Number;
+		private var _midPointX:Number;
+		private var _midPointY:Number;
+		private var _maximumRotation:Number;
 		
 		private var _reachedX:Boolean;
 		private var _reachedY:Boolean;
-		private var _reachedRot:Boolean;
+		private var _reachedMaxRot:Boolean;
+		private var _speed:Number;
+		private var _finalXIncrement:Number;
+		private var _finalYIncrement:Number;
+		private var _angleShift:Number;
+		private var _rotationDirection:int;
+		private var _maximumSpeed:Number = 1;
 		
 		public function Movement()
 		{
-			
+			_speed = 0.1;
+			_aDegree = DEGREE / 5;
 		}	
 		
-		public function moveToPoint(obj:Object, time:Number, finalValue:Point, totalTime:Number):Boolean
-		{
-			if(!(_originalValue)){
-				_originalValue = {"x": obj.x, "y": obj.y};
+		
+		public function carLikeMove(obj:Object, rallyPoint:Point):Boolean {
+			
+			if(!(_init)){
+				_init = true;
+				var initDiff:Point = rallyPoint.subtract(new Point(obj.x, obj.y));
+				var initAngle:Number = Math.atan2(initDiff.y, initDiff.x);
+				//if(_rotationDirection
+				
+				if(initAngle <= 0 && initAngle >= -45 * DEGREE){
+					_rotationDirection = -1;
+					_angleShift = 0;
+				}
+				
+				if(initAngle < -45 * DEGREE && initAngle >= -90 * DEGREE){
+					_rotationDirection = 1;
+					_angleShift = -90 * DEGREE;
+				}
+				
+				if(initAngle < -90 * DEGREE && initAngle >= -135 * DEGREE){
+					_rotationDirection = -1;					
+					_angleShift = -90 * DEGREE;
+				}
+				
+				if(initAngle < -135 * DEGREE && initAngle >= -180 * DEGREE){
+					_rotationDirection = 1;					
+					_angleShift = -180 * DEGREE;
+				}
+				
+				if(initAngle > 0 * DEGREE && initAngle <= 45 * DEGREE){
+					_rotationDirection = 1;					
+					_angleShift = 0;
+				}
+				
+				if(initAngle > 45 * DEGREE && initAngle <= 90 * DEGREE){
+					_rotationDirection = -1;					
+					_angleShift = 90 * DEGREE;
+				}
+				
+				if(initAngle > 90 * DEGREE && initAngle <= 135 * DEGREE){
+					_rotationDirection = 1;					
+					_angleShift = 90 * DEGREE;
+				}
+				
+				if(initAngle > 135 * DEGREE && initAngle <= 180 * DEGREE){
+					_rotationDirection = -1;					
+					_angleShift = 180 * DEGREE;
+				}
 			}
 			
-			if(obj.x == finalValue.x && !_reachedX)
-				_reachedX = true;				
+			var diff:Point = rallyPoint.subtract(new Point(obj.x, obj.y)); 
+			var dist:Number = diff.length;
 			
-			if(!_reachedX) obj.x = noEasing(time, _originalValue.x, finalValue.x - _originalValue.x, totalTime);
+			if (dist <= _speed)
+			{
+				obj.x = rallyPoint.x;
+				obj.y = rallyPoint.y;
+				return true;
+			}
 			
-			if(obj.y == finalValue.y && !_reachedY)
-				_reachedY = true;			
 			
-			if(!_reachedY) obj.y = noEasing(time, _originalValue.y, finalValue.y - _originalValue.y, totalTime);
 			
-			if(_reachedX && _reachedY)
+			if(_rotationDirection * (obj.rotation + _angleShift) >= _rotationDirection * (Math.atan2(diff.y, diff.x)) && !_reachedMaxRot) {
+				trace("obj: " + obj.rotation);
+				_reachedMaxRot = true;
+				obj.rotation = Math.atan2(diff.y, diff.x) - _angleShift; 
+				_maximumRotation = obj.rotation;
+				_finalXIncrement = Math.cos(_maximumRotation + _angleShift);
+				_finalYIncrement = Math.sin(_maximumRotation + _angleShift);
+			}
+			
+			if(!_reachedMaxRot) {
+				obj.rotation += _aDegree * _rotationDirection;
+				moveInDirection(obj, obj.rotation, _speed);
+				_aDegree += _aDegree / 500;
+			}
+			else {
+				moveInFixedDirection(obj, _finalXIncrement, _finalYIncrement, _speed);
+			}
+			
+			if(_speed >= _maximumSpeed)
+				_speed = _maximumSpeed;
+			else
+				_speed += 0.01;
+			
+			if(_reachedMaxRot && _reachedX && _reachedY)
 				return true;
 			else
 				return false
 			
-			
 		}
 		
-		
-		
-		
-		public function carLikeMove(obj:Object, time:Number, finalValue:Point, totalTime:Number):Boolean {
-			
-			if(!(_originalValue)){
-				_originalValue = {"x": obj.x, "y": obj.y, "rotation": obj.rotation};
-				var diff:Point = finalValue.subtract(new Point(obj.x, obj.y)); 
-				_finalValue = {"rotation": Math.atan2(diff.y, diff.x) + 90 * (Math.PI / 180)};
-			}
-			
-			if(obj.rotation == _finalValue.rotation && !_reachedRot)
-				_reachedRot = true;
-			
-			if(!_reachedRot) obj.rotation = easeInOutCubic(time, _originalValue.rotation, _finalValue.rotation - _originalValue.rotation, totalTime);
-			
-			if(obj.x == finalValue.x && !_reachedX)
-				_reachedX = true;				
-			
-			if(!_reachedX) obj.x = easeInOutCubic(time, _originalValue.x, finalValue.x - _originalValue.x, totalTime);
-			
-			if(obj.y == finalValue.y && !_reachedY)
-				_reachedY = true;			
-			
-			if(!_reachedY) obj.y = easeInOutCubic(time, _originalValue.y, finalValue.y - _originalValue.y, totalTime);
-			
-			
-			if(_reachedRot && _reachedX && _reachedY)
-				return true;
-			else
-				return false
-			
+		private function moveInDirection(obj:Object, angle:Number, speed:Number):void {
+			obj.x += Math.cos(angle + _angleShift) * speed;
+			obj.y += Math.sin(angle + _angleShift) * speed;
 		}
 		
-		
-		
-		private function noEasing(t:Number, b:Number, c:Number, d:Number):Number {
-			return c * t / d + b;
-		}
-		
-		private function easeInCubic(t:Number, b:Number, c:Number, d:Number):Number {
-			return c*(t)*t*t + b;
-		}
-		
-		private function easeInOutCubic(t:Number, b:Number, c:Number, d:Number):Number {
+		private function moveInFixedDirection(obj:Object, xIncrement:Number, yIncrement:Number, speed:Number):void {
 			
-			if ((t = t/(d/2)) < 1) return c/2*t*t*t + b;
-				return c/2*((t-=2)*t*t + 2) + b;
-		}
-		
-		private function easeOutCubic(t:Number, b:Number, c:Number, d:Number):Number
-		{
-			return c*((t=t/d-1)*t*t + 1) + b;
+			trace("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+			obj.x += xIncrement * _speed;
+			obj.y += yIncrement * _speed;
+			
 		}
 		
 		

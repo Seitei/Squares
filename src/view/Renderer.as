@@ -66,6 +66,13 @@ package view
 			_playerName = value;
 		}
 
+		//for tests purposes only
+		public function drawPoint(point:Point):void {
+			var quad:Quad = new Quad(2, 2);
+			addChild(quad); quad.x = point.x; quad.y = point.y;
+		}
+		
+		
 		public function renderEntity(entity:EntityVO):void {
 			
 			var spriteEntity:SpriteEntity = new SpriteEntity(entity.id);
@@ -113,6 +120,10 @@ package view
 			_spriteEntityDic[entity.id].x = entity.x;
 			_spriteEntityDic[entity.id].y = entity.y;
 			_spriteEntityDic[entity.id].rotation = entity.rotation;
+			
+			//debug
+			var quad:Quad = new Quad(1, 1);
+			addChild(quad); quad.x = entity.x; quad.y = entity.y;
 		}
 		
 		public function showTiles():void {
